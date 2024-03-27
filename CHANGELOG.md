@@ -8,8 +8,5 @@
 
 - Create jiopsdufniops [\#2](https://github.com/SK1Y101/test/pull/2) ([SK1Y101](https://github.com/SK1Y101))
 
-[0.0.0]
-
-Initial
 
 
