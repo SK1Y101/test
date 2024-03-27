@@ -41,7 +41,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           base: CHANGELOG.md
-          future-release: ${{ steps.version-lookup.outputs.VERSION }}
+          futureRelease: ${{ steps.version-lookup.outputs.VERSION }}
+          onlyLastTag: true
           verbose: true
 
       # create or update the release changelog
