@@ -58,7 +58,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           output: tmp_changes.md
-          sinceTag: ${{ steps.version.outputs.SHA }}
+          sinceTag: ${{ steps.version-lookup.outputs.CURRENT_VERSION }}
           futureRelease: ${{ steps.version.outputs.VERSION }}
           token: ${{ secrets.GITHUB_TOKEN }}
           excludeTagsRegex: ".*"
@@ -71,7 +71,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           base: CHANGELOG.md
-          sinceTag: ${{ steps.version.outputs.SHA }}
+          sinceTag: ${{ steps.version-lookup.outputs.CURRENT_VERSION }}
           futureRelease: ${{ steps.version.outputs.VERSION }}
           token: ${{ secrets.GITHUB_TOKEN }}
           excludeTagsRegex: ".*"
