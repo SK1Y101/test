@@ -47,6 +47,9 @@ jobs:
             echo "VERSION=$(${{ steps.version-lookup.outputs.VERSION }})" >> "$GITHUB_OUTPUT"
           fi
 
+      - run: echo ${{ steps.version.outputs.VERSION }}
+      - run: echo ${{ steps.version-lookup.outputs.CURRENT_VERSION }}
+
       # determine the changelog
       - name: "Generate release changelog"
         id: release-changelog
