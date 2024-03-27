@@ -47,6 +47,7 @@ jobs:
           version=$(cat vers | grep -oP '\d+\.\d+\.\d+' | head -1)
           rm -f vers
           echo $version
+          echo "PREVIOUS=${{ steps.version-lookup.outputs.CURRENT_VERSION }}" >> $GITHUB_OUTPUT
           echo "VERSION=${version}" >> $GITHUB_OUTPUT
 
       # determine the changelog
@@ -57,7 +58,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           output: tmp_changes.md
-          sinceTag: ${{ steps.version-lookup.outputs.CURRENT_VERSION }}
+          sinceTag: ${{ steps.version.outputs.PREVIOUS }}
           futureRelease: ${{ steps.version.outputs.VERSION }}
           token: ${{ secrets.GITHUB_TOKEN }}
           excludeTagsRegex: ".*"
@@ -70,7 +71,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           base: CHANGELOG.md
-          sinceTag: ${{ steps.version-lookup.outputs.CURRENT_VERSION }}
+          sinceTag: ${{ steps.version.outputs.PREVIOUS }}
           futureRelease: ${{ steps.version.outputs.VERSION }}
           token: ${{ secrets.GITHUB_TOKEN }}
           excludeTagsRegex: ".*"
