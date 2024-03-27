@@ -47,11 +47,12 @@ jobs:
           stripGeneratorNotice: true
           verbose: true
 
-      # Fetch changes
-      - uses: komorebitech/read-files-action@v1.5
+      # read changes
+      - name: Read Changelog
         id: changes
+        uses: juliangruber/read-file-action@v1
         with:
-          files: '["tmp_changelog.md"]'
+          path: tmp_changelog.md
 
       # prepend to existing
       - run: cat CHANGELOG.md >> tmp_changelog.md
