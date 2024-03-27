@@ -40,16 +40,17 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
+          output: tmp_changelog.md
           sinceTag: ${{ steps.version-lookup.outputs.CURRENT_VERSION }}
           futureRelease: ${{ steps.version-lookup.outputs.VERSION }}
           excludeTagsRegex: ".*"
           stripGeneratorNotice: true
           verbose: true
 
-      # clean up changelog
-      - name: Determine release number
+      # the changelog has been URL encoded, decode it
+      - name: Decode changelog
         env:
-          CHANGELOG: ${{ steps.release-changelog.output.chanelog }} | python3 -c "import sys; from urllib.parse import unquote; print(unquote(sys.stdin.read()));"
+          CHANGELOG: ${ ${{ steps.release-changelog.output.changelog }} | python3 -c "import sys; from urllib.parse import unquote; print(unquote(sys.stdin.read()));" }
         run: echo $CHANGELOG
 
       # create or update the release changelog
