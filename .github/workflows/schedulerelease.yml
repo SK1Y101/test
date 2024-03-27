@@ -44,7 +44,8 @@ jobs:
           if ((${#prs[@]} > 0 && ${#prs[0]} != 0 )); then
             version=${prs[0]}
           fi
-          output_version=$(${version} | grep -oP '\d+\.\d+\.\d+' || ${{ steps.version-lookup.outputs.VERSION }})
+          echo ${version} | grep -oP '\d+\.\d+\.\d+'
+          output_version=`${version} | grep -oP '\d+\.\d+\.\d+' || ${{ steps.version-lookup.outputs.VERSION }}`
           echo "VERSION=${output_version}" >> $GITHUB_OUTPUT
 
       - run: echo ${{ steps.version.outputs.VERSION }}
