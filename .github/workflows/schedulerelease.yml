@@ -40,7 +40,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          output: tmp_changelog.md
+          output: tmp_changes.md
           sinceTag: ${{ steps.version-lookup.outputs.CURRENT_VERSION }}
           futureRelease: ${{ steps.version-lookup.outputs.VERSION }}
           excludeTagsRegex: ".*"
@@ -52,11 +52,14 @@ jobs:
         id: changes
         uses: juliangruber/read-file-action@v1
         with:
-          path: tmp_changelog.md
+          path: tmp_changes.md.md
 
       # prepend to existing
+      - run: cat tm_changes.md
+      - run: cat tm_changes.md >> tmp_changelog.md
       - run: cat CHANGELOG.md >> tmp_changelog.md
-      - run: rm -f tmp_changelog.md
+      - run: mv -f tm_changelog.md CHANGELOG.md
+      - run: rm -f tmp_*.md
 
       # create or update the release changelog
       - uses: gr2m/create-or-update-pull-request-action@v1
