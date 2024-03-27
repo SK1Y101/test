@@ -44,9 +44,9 @@ jobs:
             echo ${prs[0]} >> vers
           fi
           echo ${{ steps.version-lookup.outputs.VERSION }} >> vers
-          version=$(cat test | grep -P '\d+\.\d+\.\d+' | head -1)
-          echo $version
+          version=$(cat vers | grep -P '\d+\.\d+\.\d+' | head -1)
           rm -f vers
+          echo $version
           echo "VERSION=${version}" >> $GITHUB_OUTPUT
 
       # determine the changelog
