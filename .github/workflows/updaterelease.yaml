@@ -29,6 +29,7 @@ jobs:
         run: |
           prs=$(gh pr list -H release/latest)
           echo ${{ github.event.pull_request.body }} >> vers
+          echo ${{ github.event.pull_request.title }} >> vers
           echo ${{ steps.version-lookup.outputs.VERSION }} >> vers
           version=$(cat vers | grep -oP '\d+\.\d+\.\d+' | head -1)
           rm -f vers
