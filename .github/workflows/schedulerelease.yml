@@ -54,7 +54,7 @@ jobs:
         with:
           path: tmp_changes.md
       - run: rm -f tmp_changes.md
-      - run: sed -i '1i${{ steps.changes.outputs.content }}' CHANGELOG.md
+      - run: echo -e "${{ steps.changes.outputs.content }}\n$(cat CHANGELOG.md)" > CHANGELOG.md
 
       # create or update the release changelog
       - uses: gr2m/create-or-update-pull-request-action@v1
