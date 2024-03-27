@@ -34,15 +34,10 @@ jobs:
           increment: patch
 
       # determine the next version name from a pre-existing PR
-      - name: "Existing PR"
-        id: prs
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          
       - name: "Get existing update"
         id: version
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           prs=$(gh pr list -H release/latest)
           if ((${#prs[@]} > 0 && ${#prs[0]} != 0 )); then
