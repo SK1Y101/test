@@ -1,4 +1,4 @@
-# Create or Update a release PR every push to main
+ # Create or Update a release PR every push to main
 name: Schedule Releases
 
 # update on changes to main
@@ -47,6 +47,7 @@ jobs:
           version=$(cat vers | grep -oP '\d+\.\d+\.\d+' | head -1)
           rm -f vers
           echo $version
+          echo ${{ github.events.push.head }}
           echo "VERSION=${version}" >> $GITHUB_OUTPUT
 
       # determine the changelog
