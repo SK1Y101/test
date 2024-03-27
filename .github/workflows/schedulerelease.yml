@@ -62,6 +62,6 @@ jobs:
         with:
           title: Release v${{ steps.version-lookup.outputs.VERSION }}
           body: ${{ steps.changes.outputs.content }}
-          branch: release/v${{ steps.version-lookup.outputs.VERSION }}
+          branch: release/latest
           commit-message: Update changelog for v${{ steps.version-lookup.outputs.VERSION }}
           update-pull-request-title-and-body: true
