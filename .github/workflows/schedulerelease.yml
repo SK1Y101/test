@@ -42,7 +42,7 @@ jobs:
           prs=$(gh pr list -H release/latest)
           version=${{ steps.version-lookup.outputs.VERSION }}
           if ((${#prs[@]} > 0 && ${#prs[0]} != 0 )); then
-            version=${prs[0]}
+            version=${prs[0]} | grep -oP '\d+\.\d+\.\d+'
           fi
           echo ${version} | grep -oP '\d+\.\d+\.\d+'
           output_version=`${version} | grep -oP '\d+\.\d+\.\d+' || ${{ steps.version-lookup.outputs.VERSION }}`
