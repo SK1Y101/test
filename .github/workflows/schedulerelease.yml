@@ -44,6 +44,7 @@ jobs:
           sinceTag: ${{ steps.version-lookup.outputs.CURRENT_VERSION }}
           futureRelease: ${{ steps.version-lookup.outputs.VERSION }}
           verbose: true
+          stripGeneratorNotice: true
 
       # create or update the release changelog
       - uses: gr2m/create-or-update-pull-request-action@v1
