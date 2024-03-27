@@ -1,8 +1,8 @@
 # Changelog
 
-## [Unreleased](https://github.com/SK1Y101/test/tree/HEAD)
+## [0.0.1](https://github.com/SK1Y101/test/tree/0.0.1) (2024-03-27)
 
-[Full Changelog](https://github.com/SK1Y101/test/compare/0.0.0...HEAD)
+[Full Changelog](https://github.com/SK1Y101/test/compare/0.0.0...0.0.1)
 
 **Merged pull requests:**
 
