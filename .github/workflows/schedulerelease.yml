@@ -41,6 +41,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           base: CHANGELOG.md
+          sinceTag: ${{ steps.version-lookup.outputs.CURRENT_VERSION }}
           futureRelease: ${{ steps.version-lookup.outputs.VERSION }}
           verbose: true
 
@@ -52,5 +53,5 @@ jobs:
           title: Release v${{ steps.version-lookup.outputs.VERSION }}
           body: ${{ steps.release-changelog.outputs.changelog }}
           branch: release/v${{ steps.version-lookup.outputs.VERSION }}
-          commit-message: bump version to v${{ steps.version-lookup.outputs.VERSION }}
+          commit-message: Update changelog for v${{ steps.version-lookup.outputs.VERSION }}
           update-pull-request-title-and-body: true
