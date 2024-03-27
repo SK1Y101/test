@@ -42,7 +42,6 @@ jobs:
         with:
           base: CHANGELOG.md
           futureRelease: ${{ steps.version-lookup.outputs.VERSION }}
-          onlyLastTag: true
           verbose: true
 
       # create or update the release changelog
