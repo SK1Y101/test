@@ -44,8 +44,6 @@ jobs:
           if ((${#prs[@]} > 0 && ${#prs[0]} != 0 )); then
             version=${prs[0]}
           fi
-          echo ${version}
-          echo ${version} | grep -oP '\d+\.\d+\.\d+'
           echo ${version} | grep -oP '\d+\.\d+\.\d+' || ${{ steps.version-lookup.outputs.VERSION }}
           test=$(${version} | grep -oP '\d+\.\d+\.\d+' || ${{ steps.version-lookup.outputs.VERSION }})
           echo ${test}
