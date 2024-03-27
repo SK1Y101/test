@@ -43,7 +43,8 @@ jobs:
           base: CHANGELOG.md
           sinceTag: ${{ steps.version-lookup.outputs.CURRENT_VERSION }}
           futureRelease: ${{ steps.version-lookup.outputs.VERSION }}
-          unreleasedOnly: true
+          excludeTagsRegex: ".*"
+          stripGeneratorNotice: true
           verbose: true
 
       # create or update the release changelog
