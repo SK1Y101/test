@@ -40,7 +40,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          base: CHANGELOG.md
           sinceTag: ${{ steps.version-lookup.outputs.CURRENT_VERSION }}
           futureRelease: ${{ steps.version-lookup.outputs.VERSION }}
           excludeTagsRegex: ".*"
@@ -53,7 +52,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           title: Release v${{ steps.version-lookup.outputs.VERSION }}
-          body: ${{ steps.release-changelog.outputs.changelog }}
+          body: ${{ steps.release-changelog.outputs.changelog }} | tr %0A \n
           branch: release/v${{ steps.version-lookup.outputs.VERSION }}
           commit-message: Update changelog for v${{ steps.version-lookup.outputs.VERSION }}
           update-pull-request-title-and-body: true
