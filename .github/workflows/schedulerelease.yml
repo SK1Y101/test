@@ -69,9 +69,10 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           base: CHANGELOG.md
-          sinceTag: ${{ steps.version-lookup.outputs.CURRENT_VERSION }}
+          sinceTag: ${{ github.event.push.head }} #${{ steps.version-lookup.outputs.CURRENT_VERSION }}
           futureRelease: ${{ steps.version.outputs.VERSION }}
           excludeTagsRegex: ".*"
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       # read changes
       - name: "Read Changelog"
