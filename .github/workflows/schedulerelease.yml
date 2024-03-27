@@ -40,15 +40,14 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           prs=$(gh pr list -H release/latest)
-          echo ${{ steps.version-lookup.outputs.VERSION }} >> vers
           if ((${#prs[@]} > 0 && ${#prs[0]} != 0 )); then
             echo ${prs[0]} | grep -oP '\d+\.\d+\.\d+' >> vers
+          else
+            echo ${{ steps.version-lookup.outputs.VERSION }} >> vers
           fi
-          cat vers
           version=$(cat vers)
           rm -f vers
-          echo ${version}
-          echo "VERSION=${output_version}" >> $GITHUB_OUTPUT
+          echo "VERSION=${version}" >> $GITHUB_OUTPUT
 
       - run: echo ${{ steps.version.outputs.VERSION }}
       - run: echo ${{ steps.version-lookup.outputs.CURRENT_VERSION }}
