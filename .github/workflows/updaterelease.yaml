@@ -27,9 +27,9 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo ${{ github.event.pull_request.body }} >> vers
-          echo ${{ github.event.pull_request.title }} >> vers
-          echo ${{ steps.version-lookup.outputs.VERSION }} >> vers
+          echo "${{ github.event.pull_request.body }}" >> vers
+          echo "${{ github.event.pull_request.title }}" >> vers
+          echo "${{ steps.version-lookup.outputs.VERSION }}" >> vers
           version=$(cat vers | grep -oP '\d+\.\d+\.\d+' | head -1)
           rm -f vers
           echo $version
@@ -70,6 +70,7 @@ jobs:
           fi
           echo "BODY=${body}" >> $GITHUB_OUTPUT
       - run: echo ${{ steps.changelog-updated.outputs.CHANGED }}
+      - run: git checkout ${{ github.event.pull_request.base.ref }} -- CHANGELOG.md
 
       # autogenerate
       - name: "Generate full changelog (Automatic)"
@@ -87,7 +88,6 @@ jobs:
       - name: "Generate full changelog (Manual)"
         if: ${{ steps.changelog-updated.outputs.CHANGED }}
         run: |
-          git checkout ${{ github.event.pull_request.base.ref }} -- CHANGELOG.md
           cat ${{ github.event.pull_request.body }} >> tmp_changelog.md
           cat CHANGELOG.md >> tmp_changelog.md
           mv -r tmp_changelog.md CHANGELOG.md
