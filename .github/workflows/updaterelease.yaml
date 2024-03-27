@@ -73,8 +73,7 @@ jobs:
 
       # autogenerate
       - name: "Generate full changelog (Automatic)"
-        if: ! ${{ steps.changelog-updated.outputs.CHANGED }}
-        id: full-changelog
+        if: ! steps.changelog-updated.outputs.CHANGED
         uses: heinrichreimer/action-github-changelog-generator@v2.4
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -86,7 +85,7 @@ jobs:
 
       # manual
       - name: "Generate full changelog (Manual)"
-        if: ${{ steps.changelog-updated.outputs.CHANGED }}
+        if: steps.changelog-updated.outputs.CHANGED
         run: |
           git checkout ${{ github.event.pull_request.base.ref }} -- CHANGELOG.md
           cat ${{ github.event.pull_request.body }} >> tmp_changelog.md
@@ -95,7 +94,7 @@ jobs:
 
       # create or update the release changelog
       - uses: gr2m/create-or-update-pull-request-action@v1
-        if: ! ${{ steps.changelog-updated.outputs.CHANGED }}
+        if: ! steps.changelog-updated.outputs.CHANGED
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -105,7 +104,7 @@ jobs:
           commit-message: Update changelog for v${{ steps.version.outputs.VERSION }}
           update-pull-request-title-and-body: true
       - uses: gr2m/create-or-update-pull-request-action@v1
-        if: ${{ steps.changelog-updated.outputs.CHANGED }}
+        if: steps.changelog-updated.outputs.CHANGED
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
