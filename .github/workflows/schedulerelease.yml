@@ -12,7 +12,7 @@ on:
       - 'docs'
       - 'examples'
 
-permissions: write_all
+permissions: write-all
 
 jobs:
   # fetch the previous tag, and the next according to semver
