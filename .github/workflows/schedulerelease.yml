@@ -22,7 +22,7 @@ jobs:
       
       - name: Get next version
         uses: reecetech/version-increment@2023.9.3
-        id: version
+        id: version-lookup
         with:
           scheme: semver
           increment: patch
@@ -34,16 +34,16 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          sinceTag: ${{ steps.version.outputs.current-verison }}
-          dueTag: ${{ steps.version.outputs.verison }}
+          sinceTag: ${{ steps.version-lookup.outputs.CURRENT_VERSION }}
+          dueTag: ${{ steps.version-lookup.outputs.VERSION }}
           verbose: true
 
       - uses: gr2m/create-or-update-pull-request-action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          title: Release v${{ steps.version.outputs.verison }}
+          title: Release v${{ steps.version-lookup.outputs.VERSION }}
           body: ${{ needs.changelog.outputs.changelog }}
-          branch: release/v${{ steps.version.outputs.verison }}
-          commit-message: bump version to v${{ steps.version.outputs.verison }}
+          branch: release/v${{ steps.version-lookup.outputs.VERSION }}
+          commit-message: bump version to v${{ steps.version-lookup.outputs.VERSION }}
           update-pull-request-title-and-body: true
