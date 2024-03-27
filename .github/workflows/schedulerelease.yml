@@ -40,7 +40,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          onlyLastTag: true
           verbose: true
 
       # create or update the release changelog
