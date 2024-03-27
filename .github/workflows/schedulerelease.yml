@@ -46,13 +46,19 @@ jobs:
           stripGeneratorNotice: true
           verbose: true
 
+      # clean up changelog
+      - name: Determine release number
+        env:
+          CHANGELOG: ${{ steps.release-changelog.output.chanelog }} | python3 -c "import sys; from urllib.parse import unquote; print(unquote(sys.stdin.read()));"
+        run: echo $CHANGELOG
+
       # create or update the release changelog
       - uses: gr2m/create-or-update-pull-request-action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           title: Release v${{ steps.version-lookup.outputs.VERSION }}
-          body: ${{ steps.release-changelog.outputs.changelog }} | tr %0A \n
+          body: $CHANGELOG
           branch: release/v${{ steps.version-lookup.outputs.VERSION }}
           commit-message: Update changelog for v${{ steps.version-lookup.outputs.VERSION }}
           update-pull-request-title-and-body: true
