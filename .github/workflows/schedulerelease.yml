@@ -18,15 +18,11 @@ jobs:
   fetch-tags:
     runs-on: ubuntu-latest
     outputs:
-      previous-tag: ${{ steps.previoustag.outputs.tag }}
-      next-tag: ${{ steps.semvers.outputs.patch }}
+      previous-tag: ${{ steps.version.outputs.current-version }}
+      next-tag: ${{ steps.version.outputs.version }}
     steps:
       - uses: actions/checkout@v4
       - run: git fetch --tags origin
-
-      - name: Get previous tag
-        id: previoustag
-        uses: "WyriHaximus/github-action-get-previous-tag@v1"
 
       - name: Get next version
         uses: reecetech/version-increment@2023.9.3
@@ -34,12 +30,6 @@ jobs:
         with:
           scheme: semver
           increment: patch
-          
-      - name: Get next minor version
-        id: semvers
-        uses: "WyriHaximus/github-action-next-semvers@v1"
-        with:
-          version: ${{ steps.previoustag.outputs.tag }}
 
   # determine the changelog
   changelog:
