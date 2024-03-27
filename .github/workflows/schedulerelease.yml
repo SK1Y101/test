@@ -24,18 +24,6 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
-
-      # determine the next version name from a pre-existing PR
-      - name: "Get existing update"
-        id: existing-pr
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          prs=$(gh pr list -H release/latest)
-          if ((${#prs[@]} > 0 && ${#prs[0]} != 0 )); then
-            echo "skip=true" >> "$GITHUB_OUTPUT"
-            echo "version=$(${prs[0]} | grep -oP '\d+\.\d+\.\d+')" >> "$GITHUB_OUTPUT"
-          fi
         
       # Create the next version name by the next patch semver
       - name: "Get next version"
@@ -45,15 +33,19 @@ jobs:
           scheme: semver
           increment: patch
 
-      - name: "Version search"
-        id: versions
+      # determine the next version name from a pre-existing PR
+      - name: "Get existing update"
+        id: version
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          echo "CURRENT_VERSION=${{ steps.version-lookup.outputs.CURRENT_VERSION }}" >> "$GITHUB_OUTPUT"
-          if (); then
-            echo "VERSION=${{ steps.existing-pr.outputs.version }}" >> "$GITHUB_OUTPUT"
+          prs=$(gh pr list -H release/latest)
+          if ((${#prs[@]} > 0 && ${#prs[0]} != 0 )); then
+            echo "VERSION=$(${prs[0]} | grep -oP '\d+\.\d+\.\d+')" >> "$GITHUB_OUTPUT"
           else
-            echo "VERSION=${{ steps.version-lookup.outputs.VERSION }}" >> "$GITHUB_OUTPUT"
+            echo "VERSION=$(${{ steps.version-lookup.outputs.VERSION }})" >> "$GITHUB_OUTPUT"
           fi
+          echo "CURRENT_VERSION=$(${{ steps.version-lookup.outputs.CURRENT_VERSION }})" >> "$GITHUB_OUTPUT"
 
       # determine the changelog
       - name: "Generate release changelog"
