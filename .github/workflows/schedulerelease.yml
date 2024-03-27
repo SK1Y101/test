@@ -41,18 +41,15 @@ jobs:
         run: |
           prs=$(gh pr list -H release/latest)
           if ((${#prs[@]} > 0 && ${#prs[0]} != 0 ) && ${prs[0]} =~ \d+\.\d+\.\d+); then
+            echo Valid version found
             echo ${prs[0]} | grep -oP '\d+\.\d+\.\d+' >> vers
           else
+            echo using calculated semver
             echo ${{ steps.version-lookup.outputs.VERSION }} >> vers
           fi
           version=$(cat vers)
           rm -f vers
           echo "VERSION=${version}" >> $GITHUB_OUTPUT
-
-      - run: echo ${{ steps.version.outputs.VERSION }}
-      - run: echo ${{ steps.version-lookup.outputs.CURRENT_VERSION }}
-      - run: echo ${{ env.VERSION }}
-      - run: echo ${{ env.CURRENT_VERSION }}
 
       # determine the changelog
       - name: "Generate release changelog"
