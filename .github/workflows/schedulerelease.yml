@@ -49,15 +49,13 @@ jobs:
 
       # Fetch changes
       - name: "Read changelog for ${{ steps.version-lookup.outputs.VERSION }}"
-        id: current-changelog
-        run: echo "CHANGES=$(cat tmp_changelog.md)" >> $GITHUB_OUTPUT
+        env:
+          CHANGES: cat tmp_changelog.md
+        run: echo ${{ env.CHANGES }}
 
       # prepend to existing
       - run: cat CHANGELOG.md >> tmp_changelog.md
       - run: rm -f tmp_changelog.md
-      # - run: echo ${{ needs.changelog.outputs.changelog }} | python3 -c "import sys; from urllib.parse import unquote; print(unquote(sys.stdin.read()));" | cat - CHANGELOG.md > tmp_changelog.md
-      # - run: rm -f CHANGELOG.md
-      # - run: mv tmp_changelog.md CHANGELOG.md
 
       # create or update the release changelog
       - uses: gr2m/create-or-update-pull-request-action@v1
