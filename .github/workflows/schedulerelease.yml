@@ -58,7 +58,7 @@ jobs:
       - run: cat tmp_changes.md >> tmp_changelog.md
       - run: cat CHANGELOG.md >> tmp_changelog.md
       - run: mv -f tmp_changelog.md CHANGELOG.md
-      - run: rm -f tmp_*.md
+      - run: rm -rf tmp_*.md
 
       # create or update the release changelog
       - uses: gr2m/create-or-update-pull-request-action@v1
