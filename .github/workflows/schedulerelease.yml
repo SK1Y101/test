@@ -44,6 +44,7 @@ jobs:
           if ((${#prs[@]} > 0 && ${#prs[0]} != 0 )); then
             version=${prs[0]}
           fi
+          echo ${version}
           echo ${version} | grep -oP '\d+\.\d+\.\d+'
           echo "VERSION=${version}" >> $GITHUB_OUTPUT
 
