@@ -13,30 +13,19 @@ on:
       - 'examples'
 
 permissions: 
-  # actions: read|write|none
-  # checks: read|write|none
   contents: write
-  # deployments: read|write|none
-  # id-token: read|write|none
-  # issues: read|write|none
-  # discussions: read|write|none
-  # packages: read|write|none
-  # pages: read|write|none
   pull-requests: write
   repository-projects: write
-  # security-events: read|write|none
-  # statuses: read|write|none
 
 jobs:
-  # fetch the previous tag, and the next according to semver
-  # (We assume patch, developers can bump to minor/major in the PR)
   create-or-update-release:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
-      
+
+      # create patch by default. Developers can change the title if the release should be minor/major
       - name: Get next version
         uses: reecetech/version-increment@2023.9.3
         id: version-lookup
@@ -51,9 +40,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          sinceTag: ${{ steps.version-lookup.outputs.CURRENT_VERSION }}
+          sinceTag: ${{ steps.version-lookup.outputs.VERSION }}
           verbose: true
 
+      # create or update the release changelog
       - uses: gr2m/create-or-update-pull-request-action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
