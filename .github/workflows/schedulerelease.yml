@@ -12,9 +12,7 @@ on:
       - 'docs'
       - 'examples'
 
-permissions:
-  pull-requests: write
-  repository-projects: write
+permissions: write_all
 
 jobs:
   # fetch the previous tag, and the next according to semver
