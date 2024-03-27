@@ -41,13 +41,11 @@ jobs:
         run: |
           prs=$(gh pr list -H release/latest)
           if ((${#prs[@]} > 0 && ${#prs[0]} != 0 )); then
-            echo ${prs[0]} | grep -oP '\d+\.\d+\.\d+' >> vers
+            echo ${prs[0]} >> vers
           fi
-          if [ ! -f vers ]; then
-            echo ${{ steps.version-lookup.outputs.VERSION }} >> vers
-          fi
-          cat vers
-          version=$(cat vers)
+          echo ${{ steps.version-lookup.outputs.VERSION }} >> vers
+          version=$(cat test | grep -P '\d+\.\d+\.\d+' | head -1)
+          echo $version
           rm -f vers
           echo "VERSION=${version}" >> $GITHUB_OUTPUT
 
