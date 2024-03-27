@@ -47,11 +47,10 @@ jobs:
           stripGeneratorNotice: true
           verbose: true
 
-      # the changelog has been URL encoded, decode it
-      - name: Decode changelog
-        env:
-          CHANGELOG: ${ ${{ steps.release-changelog.outputs.changelog }} | python3 -c "import sys; from urllib.parse import unquote; print(unquote(sys.stdin.read()));" }
-        run: echo $CHANGELOG
+      # Preprend to the preexisting changelog
+      - run: echo ${{ needs.changelog.outputs.changelog }} | cat - CHANGELOG.md > tmp_changelog.md
+      - run: rm -f CHANGELOG.md
+      - run: mv tmp_changelog.md CHANGELOG.md
 
       # create or update the release changelog
       - uses: gr2m/create-or-update-pull-request-action@v1
@@ -59,7 +58,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           title: Release v${{ steps.version-lookup.outputs.VERSION }}
-          body: $CHANGELOG
+          body: ${{ steps.release-changelog.outputs.changelog }} | python3 -c "import sys; from urllib.parse import unquote; print(unquote(sys.stdin.read()));"
           branch: release/v${{ steps.version-lookup.outputs.VERSION }}
           commit-message: Update changelog for v${{ steps.version-lookup.outputs.VERSION }}
           update-pull-request-title-and-body: true
