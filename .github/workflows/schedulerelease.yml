@@ -55,7 +55,7 @@ jobs:
           path: tmp_changes.md
 
       # prepend to existing
-      - run: cat ${{ steps.changes.outputs.content }} >> tmp_changelog.md
+      - run: cat tmp_changes.md >> tmp_changelog.md
       - run: cat CHANGELOG.md >> tmp_changelog.md
       - run: mv -f tmp_changelog.md CHANGELOG.md
       - run: rm -f tmp_*.md
