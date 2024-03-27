@@ -48,6 +48,7 @@ jobs:
             echo No valid past version found, calculated semver
             echo ${{ steps.version-lookup.outputs.VERSION }} >> vers
           fi
+          cat vers
           version=$(cat vers)
           rm -f vers
           echo "VERSION=${version}" >> $GITHUB_OUTPUT
