@@ -40,7 +40,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          sinceTag: ${{ steps.version-lookup.outputs.VERSION }}
+          onlyLastTag: true
           verbose: true
 
       # create or update the release changelog
