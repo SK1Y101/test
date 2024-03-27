@@ -62,7 +62,9 @@ jobs:
       - name: "Changelog updated"
         id: changelog-updated
         run: |
-          body=${${{ github.event.pull_request.body }}//${{ steps.version-lookup.outputs.VERSION }}/${{ steps.version.outputs.VERSION }}}
+          echo ${{ github.event.pull_request.body }} >> body
+          sed -i 's/${{ steps.version-lookup.outputs.VERSION }}/${{ steps.version.outputs.VERSION }}/g' body
+          body=$(cat body)
           if [ "$body" = "${{ steps.changes.outputs.content }}" ]; then
             echo "CHANGED=false" >> $GITHUB_OUTPUT
           else
