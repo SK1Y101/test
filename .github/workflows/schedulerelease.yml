@@ -41,16 +41,11 @@ jobs:
         run: |
           prs=$(gh pr list -H release/latest)
           if ((${#prs[@]} > 0 && ${#prs[0]} != 0 )); then
-            echo previous pr: ${prs[0]}
-            if [[ "${prs[0]}" =~ ^.*\d+\.\d+\.\d+.*$ ]]; then
-              echo Valid version found
-              echo ${prs[0]} | grep -oP '\d+\.\d+\.\d+' || ${{ steps.version-lookup.outputs.VERSION }} >> vers
-            else
-              echo using calculated semver
-              echo ${{ steps.version-lookup.outputs.VERSION }} >> vers
-            fi
-          else
-            echo using calculated semver
+            echo Previous PR found
+            echo ${prs[0]} | grep -oP '\d+\.\d+\.\d+' || ${{ steps.version-lookup.outputs.VERSION }} >> vers
+          fi
+          if [[ -z $(grep '[^[:space:]]' $vers) ]]; then
+            echo No valid past version found, calculated semver
             echo ${{ steps.version-lookup.outputs.VERSION }} >> vers
           fi
           version=$(cat vers)
