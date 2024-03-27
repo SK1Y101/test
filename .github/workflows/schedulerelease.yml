@@ -45,7 +45,6 @@ jobs:
           futureRelease: ${{ steps.version-lookup.outputs.VERSION }}
           excludeTagsRegex: ".*"
           stripGeneratorNotice: true
-          verbose: true
 
       - name: "Generate full changelog"
         id: full-changelog
