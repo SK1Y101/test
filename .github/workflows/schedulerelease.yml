@@ -42,9 +42,9 @@ jobs:
           prs=$(gh pr list -H release/latest)
           version=${{ steps.version-lookup.outputs.VERSION }}
           if ((${#prs[@]} > 0 && ${#prs[0]} != 0 )); then
-            version=${prs[0]} | grep -oP '\d+\.\d+\.\d+'
+            version=$(${prs[0]} | grep -oP '\d+\.\d+\.\d+')
           fi
-          echo ${version} | grep -oP '\d+\.\d+\.\d+'
+          echo ${version}
           output_version=`${version} | grep -oP '\d+\.\d+\.\d+' || ${{ steps.version-lookup.outputs.VERSION }}`
           echo "VERSION=${output_version}" >> $GITHUB_OUTPUT
 
