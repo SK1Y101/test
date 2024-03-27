@@ -47,6 +47,17 @@ jobs:
           stripGeneratorNotice: true
           verbose: true
 
+      - name: "Generate full changelog"
+        id: full-changelog
+        uses: heinrichreimer/action-github-changelog-generator@v2.4
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          base: CHANGELOG.md
+          sinceTag: ${{ steps.version-lookup.outputs.CURRENT_VERSION }}
+          futureRelease: ${{ steps.version-lookup.outputs.VERSION }}
+          excludeTagsRegex: ".*"
+
       # read changes
       - name: Read Changelog
         id: changes
@@ -54,7 +65,6 @@ jobs:
         with:
           path: tmp_changes.md
       - run: rm -f tmp_changes.md
-      - run: echo -e "${{ steps.changes.outputs.content }}\n$(cat CHANGELOG.md)" > CHANGELOG.md
 
       # create or update the release changelog
       - uses: gr2m/create-or-update-pull-request-action@v1
