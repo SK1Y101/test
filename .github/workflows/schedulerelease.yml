@@ -47,7 +47,7 @@ jobs:
           version=$(cat vers | grep -oP '\d+\.\d+\.\d+' | head -1)
           rm -f vers
           echo $version
-          echo ${{ github.events.push.head }}
+          echo ${{ github.event.push.head.sha }}
           echo "VERSION=${version}" >> $GITHUB_OUTPUT
 
       # determine the changelog
