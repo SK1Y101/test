@@ -33,9 +33,8 @@ jobs:
         run: |
           prs=$(gh pr list -H release/latest)
           if ((${#prs[@]} > 0 && ${#prs[0]} != 0 )); then
-            echo skipping PR creation
             echo "skip=true" >> "$GITHUB_OUTPUT"
-            echo "version=${#prs[0] | grep -oP '\d+\.\d+\.\d+'}" >> "$GITHUB_OUTPUT"
+            echo "version=$(${prs[0]} | grep -oP '\d+\.\d+\.\d+')" >> "$GITHUB_OUTPUT"
           fi
         
       # Create the next version name by the next patch semver
