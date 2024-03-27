@@ -91,3 +91,5 @@ jobs:
           branch: release/latest
           commit-message: Update changelog for v${{ steps.version.outputs.VERSION }}
           update-pull-request-title-and-body: true
+
+      - run: rm -f $GITHUB_OUTPUT
