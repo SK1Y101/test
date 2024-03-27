@@ -1,4 +1,4 @@
- # Create or Update a release PR every push to main
+o # Create or Update a release PR every push to main
 name: Schedule Releases
 
 # update on changes to main
@@ -47,7 +47,7 @@ jobs:
           version=$(cat vers | grep -oP '\d+\.\d+\.\d+' | head -1)
           rm -f vers
           echo $version
-          echo $GITHUB_SHA
+          echo "SHA=$GITHUB_SHA" >> $GITHUB_OUTPUT
           echo "VERSION=${version}" >> $GITHUB_OUTPUT
 
       # determine the changelog
@@ -58,7 +58,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           output: tmp_changes.md
-          sinceTag: $GITHUB_SHA #${{ steps.version-lookup.outputs.CURRENT_VERSION }}
+          sinceTag: ${{ steps.version.outputs.SHA }}
           futureRelease: ${{ steps.version.outputs.VERSION }}
           token: ${{ secrets.GITHUB_TOKEN }}
           excludeTagsRegex: ".*"
@@ -71,7 +71,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           base: CHANGELOG.md
-          sinceTag: $GITHUB_SHA #${{ steps.version-lookup.outputs.CURRENT_VERSION }}
+          sinceTag: ${{ steps.version.outputs.SHA }}
           futureRelease: ${{ steps.version.outputs.VERSION }}
           token: ${{ secrets.GITHUB_TOKEN }}
           excludeTagsRegex: ".*"
