@@ -34,20 +34,23 @@ jobs:
           increment: patch
 
       # determine the next version name from a pre-existing PR
+      - name: "Existing PR"
+        id: prs
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
       - name: "Get existing update"
         id: version
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           prs=$(gh pr list -H release/latest)
-          currentversion=${{ steps.version-lookup.outputs.CURRENT_VERSION }}
           if ((${#prs[@]} > 0 && ${#prs[0]} != 0 )); then
-            version=$(echo ${prs[0]} | grep -oP '\d+\.\d+\.\d+')
+            echo "VERSION=$(echo ${prs[0]} | grep -oP '\d+\.\d+\.\d+')" >> "GITHUB_OUTPUT"
           else
             version=${{ steps.version-lookup.outputs.VERSION }}
+            echo "VERSION=$(${{ steps.version-lookup.outputs.VERSION }})" >> "$GITHUB_OUTPUT"
           fi
-          echo "VERSION=$version" >> "$GITHUB_OUTPUT"
-          echo "VERSION=$currentversion" >> "$GITHUB_OUTPUT"
 
       # determine the changelog
       - name: "Generate release changelog"
@@ -57,7 +60,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           output: tmp_changes.md
-          sinceTag: ${{ steps.version.outputs.CURRENT_VERSION }}
+          sinceTag: ${{ steps.version-lookup.outputs.CURRENT_VERSION }}
           futureRelease: ${{ steps.version.outputs.VERSION }}
           excludeTagsRegex: ".*"
           stripGeneratorNotice: true
@@ -69,7 +72,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           base: CHANGELOG.md
-          sinceTag: ${{ steps.version.outputs.CURRENT_VERSION }}
+          sinceTag: ${{ steps.version-lookup.outputs.CURRENT_VERSION }}
           futureRelease: ${{ steps.version.outputs.VERSION }}
           excludeTagsRegex: ".*"
 
