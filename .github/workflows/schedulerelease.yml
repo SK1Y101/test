@@ -55,10 +55,9 @@ jobs:
           path: tmp_changes.md
 
       # prepend to existing
-      - run: cat tm_changes.md
-      - run: cat tm_changes.md >> tmp_changelog.md
+      - run: cat ${{ steps.changes.outputs.content }} >> tmp_changelog.md
       - run: cat CHANGELOG.md >> tmp_changelog.md
-      - run: mv -f tm_changelog.md CHANGELOG.md
+      - run: mv -f tmp_changelog.md CHANGELOG.md
       - run: rm -f tmp_*.md
 
       # create or update the release changelog
