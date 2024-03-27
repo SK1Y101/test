@@ -47,7 +47,7 @@ jobs:
           echo ${version}
           echo ${version} | grep -oP '\d+\.\d+\.\d+'
           echo ${version} | grep -oP '\d+\.\d+\.\d+' || ${{ steps.version-lookup.outputs.VERSION }}
-          echo test=$(${version} | grep -oP '\d+\.\d+\.\d+' || ${{ steps.version-lookup.outputs.VERSION }})
+          test=$(${version} | grep -oP '\d+\.\d+\.\d+' || ${{ steps.version-lookup.outputs.VERSION }})
           echo ${test}
           echo "VERSION=${version}" >> $GITHUB_OUTPUT
 
