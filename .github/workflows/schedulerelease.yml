@@ -12,6 +12,10 @@ on:
       - 'docs'
       - 'examples'
 
+permissions:
+  pull-requests: write|none
+  repository-projects: write
+
 jobs:
   # fetch the previous tag, and the next according to semver
   # (We assume patch, developers can bump to minor/major in the PR)
