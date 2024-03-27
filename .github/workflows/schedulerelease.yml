@@ -48,10 +48,10 @@ jobs:
           verbose: true
 
       # Fetch changes
-      - name: "Read changelog for ${{ steps.version-lookup.outputs.VERSION }}"
-        env:
-          CHANGES: cat tmp_changelog.md
-        run: echo ${{ env.CHANGES }}
+      - uses: komorebitech/read-files-action@v1.5
+        id: changes
+        with:
+          files: '["tmp_changelog.md"]'
 
       # prepend to existing
       - run: cat CHANGELOG.md >> tmp_changelog.md
@@ -63,7 +63,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           title: Release v${{ steps.version-lookup.outputs.VERSION }}
-          body: ${{ env.CHANGES }}
+          body: ${{ steps.changes.outputs.content }}
           branch: release/v${{ steps.version-lookup.outputs.VERSION }}
           commit-message: Update changelog for v${{ steps.version-lookup.outputs.VERSION }}
           update-pull-request-title-and-body: true
