@@ -53,7 +53,7 @@ jobs:
         uses: juliangruber/read-file-action@v1
         with:
           path: tmp_changes.md
-      - run: rm -rf *.md
+      - run: rm -f tmp_changes.md
 
       # create or update the release changelog
       - uses: gr2m/create-or-update-pull-request-action@v1
