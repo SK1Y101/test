@@ -40,13 +40,14 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           prs=$(gh pr list -H release/latest)
+          currentversion=${{ steps.version-lookup.outputs.CURRENT_VERSION }}
           if ((${#prs[@]} > 0 && ${#prs[0]} != 0 )); then
-            version=$(echo ${prs[0]} | grep -oP '\d+\.\d+\.\d+)
+            version=$(echo ${prs[0]} | grep -oP '\d+\.\d+\.\d+')
           else
             version=${{ steps.version-lookup.outputs.VERSION }}
           fi
           echo "VERSION=$version" >> "$GITHUB_OUTPUT"
-          echo "CURRENT_VERSION=$(${{ steps.version-lookup.outputs.CURRENT_VERSION }})" >> "$GITHUB_OUTPUT"
+          echo "VERSION=$currentversion" >> "$GITHUB_OUTPUT"
 
       # determine the changelog
       - name: "Generate release changelog"
