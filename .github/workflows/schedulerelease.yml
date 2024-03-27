@@ -25,13 +25,36 @@ jobs:
         with:
           persist-credentials: false
 
-      # create patch by default. Developers can change the title if the release should be minor/major
-      - name: Get next version
+      # determine the next version name from a pre-existing PR
+      - name: "Get existing update"
+        id: existing-pr
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          prs=$(gh pr list -H release/latest)
+          if ((${#prs[@]} > 0 && ${#prs[0]} != 0 )); then
+            echo skipping PR creation
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            echo "version=${#prs[0] | grep -oP '\d+\.\d+\.\d+'}" >> "$GITHUB_OUTPUT"
+          fi
+        
+      # Create the next version name by the next patch semver
+      - name: "Get next version"
         uses: reecetech/version-increment@2023.9.3
         id: version-lookup
         with:
           scheme: semver
           increment: patch
+
+      - name: "Version search"
+        id: versions
+        run: |
+          echo "CURRENT_VERSION=${{ steps.version-lookup.outputs.CURRENT_VERSION }}" >> "$GITHUB_OUTPUT"
+          if (); then
+            echo "VERSION=${{ steps.existing-pr.outputs.version }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "VERSION=${{ steps.version-lookup.outputs.VERSION }}" >> "$GITHUB_OUTPUT"
+          fi
 
       # determine the changelog
       - name: "Generate release changelog"
@@ -41,8 +64,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           output: tmp_changes.md
-          sinceTag: ${{ steps.version-lookup.outputs.CURRENT_VERSION }}
-          futureRelease: ${{ steps.version-lookup.outputs.VERSION }}
+          sinceTag: ${{ steps.version.outputs.CURRENT_VERSION }}
+          futureRelease: ${{ steps.version.outputs.VERSION }}
           excludeTagsRegex: ".*"
           stripGeneratorNotice: true
 
@@ -53,12 +76,12 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           base: CHANGELOG.md
-          sinceTag: ${{ steps.version-lookup.outputs.CURRENT_VERSION }}
-          futureRelease: ${{ steps.version-lookup.outputs.VERSION }}
+          sinceTag: ${{ steps.version.outputs.CURRENT_VERSION }}
+          futureRelease: ${{ steps.version.outputs.VERSION }}
           excludeTagsRegex: ".*"
 
       # read changes
-      - name: Read Changelog
+      - name: "Read Changelog"
         id: changes
         uses: juliangruber/read-file-action@v1
         with:
@@ -70,8 +93,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          title: Release v${{ steps.version-lookup.outputs.VERSION }}
+          title: Release v${{ steps.version.outputs.VERSION }}
           body: ${{ steps.changes.outputs.content }}
           branch: release/latest
-          commit-message: Update changelog for v${{ steps.version-lookup.outputs.VERSION }}
+          commit-message: Update changelog for v${{ steps.version.outputs.VERSION }}
           update-pull-request-title-and-body: true
