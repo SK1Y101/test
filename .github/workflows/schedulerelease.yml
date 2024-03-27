@@ -56,8 +56,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - run: echo ${{ needs.changelog.outputs.changelog }} | cat - CHANGELOG.md > CHANGELOG.md
-
       - uses: gr2m/create-or-update-pull-request-action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
