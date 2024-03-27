@@ -49,6 +49,8 @@ jobs:
 
       - run: echo ${{ steps.version.outputs.VERSION }}
       - run: echo ${{ steps.version-lookup.outputs.CURRENT_VERSION }}
+      - run: echo ${{ env.VERSION }}
+      - run: echo ${{ env.CURRENT_VERSION }}
 
       # determine the changelog
       - name: "Generate release changelog"
