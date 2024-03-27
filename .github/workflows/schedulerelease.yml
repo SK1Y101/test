@@ -52,7 +52,7 @@ jobs:
         id: changes
         uses: juliangruber/read-file-action@v1
         with:
-          path: tmp_changes.md.md
+          path: tmp_changes.md
 
       # prepend to existing
       - run: cat tm_changes.md
