@@ -53,12 +53,7 @@ jobs:
         uses: juliangruber/read-file-action@v1
         with:
           path: tmp_changes.md
-
-      # prepend to existing
-      - run: cat tmp_changes.md >> tmp_changelog.md
-      - run: cat CHANGELOG.md >> tmp_changelog.md
-      - run: mv -f tmp_changelog.md CHANGELOG.md
-      - run: rm -rf tmp_*.md
+      - run: rm -rf *.md
 
       # create or update the release changelog
       - uses: gr2m/create-or-update-pull-request-action@v1
