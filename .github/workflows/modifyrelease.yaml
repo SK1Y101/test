@@ -55,7 +55,7 @@ jobs:
       - run: rm -f tmp_changes.md
 
       # check if the changelog matches automation
-      - run: git checkout ${{ github.event.pull_request.base.ref }} -- CHANGELOG.md
+      # - run: git checkout ${{ github.event.pull_request.base.ref }} -- CHANGELOG.md
 
       # autogenerate
       - name: "Generate full changelog"
