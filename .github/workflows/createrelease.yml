@@ -19,14 +19,14 @@ jobs:
       
       - name: Determine release number
         id: release
-        env:
-          RELEASE: ${{ github.event.pull_request.title }} | grep -oP '\d+\.\d+\.\d+'
-        run: echo releasing v$RELEASE
-      
-      - name: Determine release changelog
-        env:
-          CHANGELOG: ${{ github.event.pull_request.body }}
-        run: echo $CHANGELOG
+        run: |
+          version=$(${{ github.event.pull_request.title }}  | grep -oP '\d+\.\d+\.\d+' | head -1)
+          echo "VERSION=${version}" >> $GITHUB_OUTPUT
+          echo "CHANGELOG=${{ github.event.pull_request.body }}" >> $GITHUB_OUTPUT
+
+      - run: |
+          echo ${{ steps.release.outputs.VERSION }}
+          echo ${{ steps.release.outputs.CHANGELOG }}
       
       - name: Create Release
         id: create_release
@@ -34,8 +34,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ steps.release.outputs.RELEASE }}
-          release_name: v${{ steps.release.outputs.RELEASE }}
-          body: ${{ github.event.pull_request.body }}
+          tag_name: ${{ steps.release.outputs.VERSION }}
+          release_name: v${{ steps.release.outputs.VERSION }}
+          body: ${{ steps.release.outputs.CHANGELOG }}
           draft: true
           prerelease: false
+
+      - run: rm -f $GITHUB_OUTPUT
