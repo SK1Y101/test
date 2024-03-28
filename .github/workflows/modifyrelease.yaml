@@ -24,6 +24,7 @@ jobs:
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           username: ${{ github.actor }}
+          organization: maas
           team: maas-engineering
     
   change_version:
