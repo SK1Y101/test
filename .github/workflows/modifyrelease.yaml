@@ -28,24 +28,32 @@ jobs:
     
   change_version:
     needs: allowed_member
-    if: startsWith(github.event.pull_request.title, 'Release v') && needs.allowed_member.outputs.IS_MEMBER == true && contains(github.event.comment.body, "Version")
+    if: startsWith(github.event.pull_request.title, 'Release v') && startsWith(github.event.comment.body, 'Version') && needs.allowed_member.outputs.IS_MEMBER == true
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
+        
+      # Create the next version name by the next patch semver
+      - name: "Get previous release version"
+        uses: reecetech/version-increment@2023.9.3
+        id: version-lookup
+        with:
+          scheme: semver
+          increment: patch
 
-      # determine the next version name from a pre-existing PR
-      - name: "Get existing update"
+      - name: "Get new version"
         id: version
+        run: |
+          version=$(${{ github.event.comment.body }} | grep -oP '\d+\.\d+\.\d+' | head -1)
+          echo "VERSION=${version}" >> $GITHUB_OUTPUT
+      - name: "Get existing version"
+        id: current
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo "${{ github.event.pull_request.title }}" >> vers
-          echo "${{ steps.version-lookup.outputs.VERSION }}" >> vers
-          version=$(cat vers | grep -oP '\d+\.\d+\.\d+' | head -1)
-          rm -f vers
-          echo $version
+          version=$(${{ github.event.pull_request.title }} | grep -oP '\d+\.\d+\.\d+' | head -1)
           echo "VERSION=${version}" >> $GITHUB_OUTPUT
 
       # determine the changelog
@@ -74,7 +82,7 @@ jobs:
         id: changelog-updated
         run: |
           echo "${{ github.event.pull_request.body }}" >> body
-          sed -i 's/${{ steps.version-lookup.outputs.VERSION }}/${{ steps.version.outputs.VERSION }}/g' body
+          sed -i 's/${{ steps.version-lookup.outputs.VERSION }}/${{ steps.current.outputs.VERSION }}/g' body
           body=$(cat body)
           if [ "$body" = "${{ steps.changes.outputs.content }}" ]; then
             echo "CHANGED=false" >> $GITHUB_OUTPUT
@@ -102,6 +110,7 @@ jobs:
         if: ${{ steps.changelog-updated.outputs.CHANGED }}
         run: |
           cat ${{ github.event.pull_request.body }} >> tmp_changelog.md
+          sed -i 's/${{ steps.current.outputs.VERSION }}/${{ steps.version.outputs.VERSION }}/g' tmp_changelog
           cat CHANGELOG.md >> tmp_changelog.md
           mv -r tmp_changelog.md CHANGELOG.md
 
