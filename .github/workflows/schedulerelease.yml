@@ -60,6 +60,7 @@ jobs:
           output: tmp_changes.md
           futureRelease: ${{ steps.version.outputs.VERSION }}
           excludeTagsRegex: ".*"
+          compareLink: false
           stripGeneratorNotice: true
 
       - name: "Generate full changelog"
@@ -70,6 +71,8 @@ jobs:
         with:
           base: CHANGELOG.md
           futureRelease: ${{ steps.version.outputs.VERSION }}
+          excludeTagsRegex: ".*"
+          compareLink: false
           stripGeneratorNotice: true
 
       - name: add comparison
