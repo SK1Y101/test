@@ -35,12 +35,14 @@ jobs:
           increment: patch
 
       # determine whether CHANGELOG.md contains an unaccounted for version
-      - name: "Rewrite Changelog"
+      - name: "Fetch old Changelog"
+        if: ${{ hashFiles('CHANGELOG.md') != "" }}
         id: old_changelog
         uses: juliangruber/read-file-action@v1
         with:
           path: CHANGELOG.md
       - name: Check versions
+        if: ${{ hashFiles('CHANGELOG.md') != "" }}
         id: old-vers
         run: |
           last_ver=$(steps.old_changelog.outputs.contents | grep -oP '\d+\.\d+\.\d+' | head -1)
@@ -50,7 +52,7 @@ jobs:
             echo "DELETE=false" >> $GITHUB_OUTPUT
           fi
       - run: rm -f CHANGELOG.md
-        if: ${{ steps.old-vers.outputs.DELETE }}
+        if: ${{ hashFiles('CHANGELOG.md') != "" }} && ${{ steps.old-vers.outputs.DELETE }}
 
       # determine the next version name from a pre-existing PR
       - name: "Get existing update"
