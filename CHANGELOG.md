@@ -1,8 +1,8 @@
 # Changelog
 
-## [0.0.5](https://github.com/SK1Y101/test/tree/0.0.5) (2024-03-28)
+## [0.0.1](https://github.com/SK1Y101/test/tree/0.0.1) (2024-03-28)
 
-[Full Changelog](https://github.com/SK1Y101/test/compare/759278b8143e0ccea99aefb113e06788a4977368...0.0.5)
+[Full Changelog](https://github.com/SK1Y101/test/compare/759278b8143e0ccea99aefb113e06788a4977368...0.0.1)
 
 **Merged pull requests:**
 
