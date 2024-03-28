@@ -40,8 +40,17 @@ jobs:
         uses: juliangruber/read-file-action@v1
         with:
           path: CHANGELOG.md
+      - name: Check versions
+        id: old-vers
+        run: |
+          last_ver=$(steps.old_changelog.outputs.contents | grep -oP '\d+\.\d+\.\d+' | head -1)
+          if (last_ver = ${{ steps.version-lookup.outputs.VERSION }}); then
+            echo "DELETE=true" >> $GITHUB_OUTPUT
+          else
+            echo "DELETE=false" >> $GITHUB_OUTPUT
+          fi
       - run: rm -f CHANGELOG.md
-        if: ${{ steps.old_changelog.outputs.contents | grep -oP '\d+\.\d+\.\d+' | head -1 = steps.version-lookup.outputs.VERSION }}
+        if: ${{ steps.old-vers.outputs.DELETE }}
 
       # determine the next version name from a pre-existing PR
       - name: "Get existing update"
