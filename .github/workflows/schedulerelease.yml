@@ -73,6 +73,10 @@ jobs:
           excludeTagsRegex: ".*"
           stripGeneratorNotice: true
 
+      - name: add comparison
+        run: |
+          echo "**Full Changelog**: https://github.com/${{ env.GITHUB_REPOSITORY }}/compare/${{ steps.version-lookup.outputs.CURRENT_VERSION }}...${{ steps.version.outputs.VERSION }}" >> tmp_changes.md
+
       # read changes
       - name: "Read Changelog"
         id: changes
