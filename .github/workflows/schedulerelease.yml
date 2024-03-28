@@ -70,7 +70,6 @@ jobs:
         with:
           base: CHANGELOG.md
           futureRelease: ${{ steps.version.outputs.VERSION }}
-          excludeTagsRegex: ".*"
           stripGeneratorNotice: true
 
       - name: add comparison
