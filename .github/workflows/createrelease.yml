@@ -22,7 +22,7 @@ jobs:
         run: |
           version=$(${{ github.event.pull_request.title }}  | grep -oP '\d+\.\d+\.\d+' | head -1)
           echo "VERSION=${version}" >> $GITHUB_OUTPUT
-          echo "CHANGELOG=${{ github.event.pull_request.body }}" >> $GITHUB_OUTPUT
+          echo "CHANGELOG='${{ github.event.pull_request.body }}'" >> $GITHUB_OUTPUT
 
       - run: |
           echo ${{ steps.release.outputs.VERSION }}
