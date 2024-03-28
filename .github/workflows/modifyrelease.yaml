@@ -1,10 +1,10 @@
 name: Update version information
 
-# run on pull request comment
+# update on changes to main
 on:
   pull_request:
-  issue_comment:
-    types: [created]
+    types:
+      - "edited"
 
 permissions: 
   contents: write
@@ -12,63 +12,25 @@ permissions:
   repository-projects: write
 
 jobs:
-  allowed_member:
-    runs-on: ubuntu-latest
-    outputs:
-      IS_MEMBER: ${{ steps.teamAffiliation.outputs.isTeamMember }}
-    steps:
-      - name: Check user for team affiliation
-        uses: tspascoal/get-user-teams-membership@v2
-        id: teamAffiliation
-        with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          username: ${{ github.actor }}
-          organization: maas
-          team: maas-engineering
-
-  command:
-    needs: allowed_member
-    runs-on: ubuntu-latest
-    if: startsWith(github.event.pull_request.title, 'Release v') && needs.allowed_member.outputs.IS_MEMBER == true
-    outputs:
-      COMMAND: ${{ steps.command.outputs.COMMAND }}
-      ARG: ${{ steps.command.outputs.ARG }}
-    steps:
-      - name: fetch command
-        id: command
-        run: |
-          echo "COMMAND=''" >> $GITHUB_OUTPUT
-          echo "ARG=''" >> $GITHUB_OUTPUT
-          input=$(${{ github.event.comment.body}} | tr '[:upper:]' '[:lower:]')
-          if [[ $input == version:* ]]; then
-            ver=$(echo $input | grep -oP '\d+\.\d+\.\d+' | head -1)
-            echo "COMMAND=version" >> $GITHUB_OUTPUT
-            echo "ARG=${ver}" >> $GITHUB_OUTPUT
-          fi
-    
-  change_version:
-    needs: command
-    if: needs.command.outputs.COMMAND == "version"
+  update_changelog:
+    if: startsWith(github.event.pull_request.title, 'Release v')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
-        
-      # Create the next version name by the next patch semver
-      - name: "Get previous release version"
-        uses: reecetech/version-increment@2023.9.3
-        id: version-lookup
-        with:
-          scheme: semver
-          increment: patch
 
-      - name: "Get existing version"
-        id: current
+      # determine the next version name from a pre-existing PR
+      - name: "Get existing update"
+        id: version
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          version=$(${{ github.event.pull_request.title }} | grep -oP '\d+\.\d+\.\d+' | head -1)
+          echo "${{ github.event.pull_request.title }}" >> vers
+          echo "${{ steps.version-lookup.outputs.VERSION }}" >> vers
+          version=$(cat vers | grep -oP '\d+\.\d+\.\d+' | head -1)
+          rm -f vers
+          echo $version
           echo "VERSION=${version}" >> $GITHUB_OUTPUT
 
       # determine the changelog
@@ -80,7 +42,7 @@ jobs:
         with:
           output: tmp_changes.md
           sinceTag: ${{ steps.version-lookup.outputs.CURRENT_VERSION }}
-          futureRelease: ${{ needs.command.outputs.ARG }}
+          futureRelease: ${{ steps.version.outputs.VERSION }}
           excludeTagsRegex: ".*"
           stripGeneratorNotice: true
 
@@ -92,6 +54,9 @@ jobs:
           path: tmp_changes.md
       - run: rm -f tmp_changes.md
 
+      # check if the changelog matches automation
+      - run: git checkout ${{ github.event.pull_request.base.ref }} -- CHANGELOG.md
+
       # autogenerate
       - name: "Generate full changelog"
         uses: heinrichreimer/action-github-changelog-generator@v2.4
@@ -100,7 +65,7 @@ jobs:
         with:
           base: CHANGELOG.md
           sinceTag: ${{ steps.version-lookup.outputs.CURRENT_VERSION }}
-          futureRelease: ${{ needs.command.outputs.ARG }}
+          futureRelease: ${{ steps.version.outputs.VERSION }}
           excludeTagsRegex: ".*"
 
       # create or update the release changelog
@@ -108,10 +73,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          title: Release v${{ needs.command.outputs.ARG }}
+          title: Release v${{ steps.version.outputs.VERSION }}
           body: ${{ steps.changes.outputs.content }}
           branch: release/latest
-          commit-message: Update changelog to v${{ needs.command.outputs.ARG }}
+          commit-message: Update changelog for v${{ steps.version.outputs.VERSION }}
           update-pull-request-title-and-body: true
 
       - run: rm -f $GITHUB_OUTPUT
