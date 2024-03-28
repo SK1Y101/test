@@ -41,7 +41,7 @@ jobs:
         with:
           path: CHANGELOG.md
       - run: rm -f CHANGELOG.md
-        if: ${{ $(steps.old_changelog.outputs.contents | grep -oP '\d+\.\d+\.\d+' | head -1) = steps.version-lookup.outputs.VERSION }}
+        if: ${{ steps.old_changelog.outputs.contents | grep -oP '\d+\.\d+\.\d+' | head -1 = steps.version-lookup.outputs.VERSION }}
 
       # determine the next version name from a pre-existing PR
       - name: "Get existing update"
