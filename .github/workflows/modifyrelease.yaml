@@ -1,7 +1,6 @@
-# Create or Update a release PR every push to main
-name: Schedule Releases
+name: Update version information
 
-# update on changes to main
+# run on pull request comment
 on:
   pull_request:
   issue_comment:
@@ -26,10 +25,30 @@ jobs:
           username: ${{ github.actor }}
           organization: maas
           team: maas-engineering
+
+  command:
+    needs: allowed_member
+    runs-on: ubuntu-latest
+    if: startsWith(github.event.pull_request.title, 'Release v') && needs.allowed_member.outputs.IS_MEMBER == true
+    outputs:
+      COMMAND: ${{ steps.command.outputs.COMMAND }}
+      ARG: ${{ steps.command.outputs.ARG }}
+    steps:
+      - name: fetch command
+        id: command
+        run: |
+          echo "COMMAND=''" >> $GITHUB_OUTPUT
+          echo "ARG=''" >> $GITHUB_OUTPUT
+          input=$(${{ github.event.comment.body}} | tr '[:upper:]' '[:lower:]')
+          if [[ $input == version:* ]]; then
+            ver=$(echo $input | grep -oP '\d+\.\d+\.\d+' | head -1)
+            echo "COMMAND=version" >> $GITHUB_OUTPUT
+            echo "ARG=${ver}" >> $GITHUB_OUTPUT
+          fi
     
   change_version:
-    needs: allowed_member
-    if: startsWith(github.event.pull_request.title, 'Release v') && startsWith(github.event.comment.body, 'Version') && needs.allowed_member.outputs.IS_MEMBER == true
+    needs: command
+    if: needs.command.outputs.COMMAND == "version"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -44,11 +63,6 @@ jobs:
           scheme: semver
           increment: patch
 
-      - name: "Get new version"
-        id: version
-        run: |
-          version=$(${{ github.event.comment.body }} | grep -oP '\d+\.\d+\.\d+' | head -1)
-          echo "VERSION=${version}" >> $GITHUB_OUTPUT
       - name: "Get existing version"
         id: current
         env:
@@ -66,7 +80,7 @@ jobs:
         with:
           output: tmp_changes.md
           sinceTag: ${{ steps.version-lookup.outputs.CURRENT_VERSION }}
-          futureRelease: ${{ steps.version.outputs.VERSION }}
+          futureRelease: ${{ needs.command.outputs.ARG }}
           excludeTagsRegex: ".*"
           stripGeneratorNotice: true
 
@@ -86,7 +100,7 @@ jobs:
         with:
           base: CHANGELOG.md
           sinceTag: ${{ steps.version-lookup.outputs.CURRENT_VERSION }}
-          futureRelease: ${{ steps.version.outputs.VERSION }}
+          futureRelease: ${{ needs.command.outputs.ARG }}
           excludeTagsRegex: ".*"
 
       # create or update the release changelog
@@ -94,10 +108,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          title: Release v${{ steps.version.outputs.VERSION }}
+          title: Release v${{ needs.command.outputs.ARG }}
           body: ${{ steps.changes.outputs.content }}
           branch: release/latest
-          commit-message: Update changelog for v${{ steps.version.outputs.VERSION }}
+          commit-message: Update changelog to v${{ needs.command.outputs.ARG }}
           update-pull-request-title-and-body: true
 
       - run: rm -f $GITHUB_OUTPUT
