@@ -75,7 +75,7 @@ jobs:
       - name: add comparison
         id: comparison
         run: |
-          comparison="**Full Changelog**: https://github.com/${{ env.GITHUB_REPOSITORY }}/compare/${{ steps.version-lookup.outputs.CURRENT_VERSION }}...${{ steps.version.outputs.VERSION }}" >> tmp_changes.md
+          comparison="**Full Changelog**: https://github.com/${{ env.GITHUB_REPOSITORY }}/compare/${{ steps.version-lookup.outputs.CURRENT_VERSION }}...${{ steps.version.outputs.VERSION }}"
           echo "COMPARISON=${comparison}" >> $GITHUB_OUTPUT
 
       # read changes
